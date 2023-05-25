@@ -1,7 +1,6 @@
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
-// eslint-disable-next-line consistent-return
 const addBookHandler = (request, h) => {
   const {
     name, year, author, summary, publisher, pageCount, readPage, reading,
@@ -59,14 +58,18 @@ const addBookHandler = (request, h) => {
     response.code(201);
     return response;
   }
+
+  request.code(500);
+  return request();
 };
 
 const getAllBooksHandler = (request, h) => {
   const { name, reading, finished } = request.query;
   let booksRequest = books;
   if (name !== undefined) {
-    // eslint-disable-next-line max-len
-    booksRequest = books.filter((bookFiltered) => bookFiltered.name.toLowerCase().includes(name.toLowerCase()));
+    booksRequest = books.filter(
+      (bookFiltered) => bookFiltered.name.toLowerCase().includes(name.toLowerCase()),
+    );
   }
   if (reading !== undefined) {
     booksRequest = books.filter((bookFiltered) => bookFiltered.reading === !!Number(reading));
@@ -173,7 +176,7 @@ const editBookByIdHandler = (request, h) => {
 const deleteBookByIdHandler = (request, h) => {
   const { bookId } = request.params;
 
-  const index = books.findIndex((book) => book.Id === bookId);
+  const index = books.findIndex((book) => book.id === bookId);
 
   if (index !== -1) {
     books.splice(index, 1);
